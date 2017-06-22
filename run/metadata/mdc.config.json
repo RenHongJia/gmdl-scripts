@@ -1,0 +1,28 @@
+{
+  "datasets": {
+    "iris": {
+      "labels": ["Iris-setosa", "Iris-versicolor", "Iris-virginica"]
+    },
+    "wdbc": {
+      "labels": ["M", "B"]
+    },
+    "wine-white": {
+      "labels": ["3", "4", "5", "6", "7", "8", "9"]
+    },
+    "skin": {
+      "labels": ["1", "2"]
+    },
+    "covertype": {
+      "labels": ["1", "2", "3", "4", "5", "6", "7"]
+    },
+    "letter": {
+      "labels": ["H", "Z", "C", "K", "J", "S", "W", "O", "I", "R", "L", "V", "B", "E", "G", "F", "N", "Q", "Y", "X", "A", "M", "T", "P", "D", "U"]
+    },
+    "wine": {
+      "labels": ["1", "2", "3"]
+    },
+    "wine-red": {
+      "labels": ["3", "4", "5", "6", "7", "8"]
+    }
+  }
+}
