@@ -9,7 +9,6 @@ from itertools import product
 import os
 from sklearn import preprocessing
 import pandas as pd
-import pickle
 
 class Classifier(object):
   def __init__(self):
@@ -46,7 +45,7 @@ class Classifier(object):
     return path, train, test
 
   def run(self, model, path, train, test, set_name, id=0):
-    id = pickle.dumps(model) + '.' + str(id)
+    id = str(model) + '.' + str(id)
 
     path, train, test = self.normalize(id, path, train, test, set_name)
 
