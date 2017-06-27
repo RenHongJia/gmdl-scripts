@@ -9,6 +9,7 @@ from itertools import product
 import os
 from sklearn import preprocessing
 import pandas as pd
+import pickle
 
 class Classifier(object):
   def __init__(self):
@@ -20,7 +21,7 @@ class Classifier(object):
 
     return list(product(sigma, omega))
 
-  def normalize(self, id, path, train, test):
+  def normalize(self, id, path, train, test, set_name):
     X_train = pd.read_csv(os.path.join(path, train), header=None)
     X_test = pd.read_csv(os.path.join(path, test), header=None)
     label = len(X_train.columns) - 1
@@ -36,16 +37,18 @@ class Classifier(object):
     X_test = pd.DataFrame(scaler.transform(X_test))
 
     path = '/tmp/'
-    train = 'train.mdc' + str(id)
-    test = 'test.mdc' + str(id)
+    train = 'train.mdc.' + set_name + '.' + id
+    test = 'test.mdc.' + set_name + '.' + id
 
-    X_train.assign(label=y_train.values).to_csv(path + train, header=False)
-    X_test.assign(label=y_test.values).to_csv(path + test, header=False)
+    X_train.assign(label=y_train.values).to_csv(path + train, header=False, index=False)
+    X_test.assign(label=y_test.values).to_csv(path + test, header=False, index=False)
 
     return path, train, test
 
   def run(self, model, path, train, test, set_name, id=0):
-    path, train, test = self.normalize(id, path, train, test)
+    id = pickle.dumps(model) + '.' + str(id)
+
+    path, train, test = self.normalize(id, path, train, test, set_name)
 
     cmd = self.__command(locals())
 
@@ -54,6 +57,9 @@ class Classifier(object):
     )
 
     output, err = p.communicate()
+
+    os.remove(path + train)
+    os.remove(path + test)
 
     try:
       scores = map(lambda x: float(x), output.split('/'))
