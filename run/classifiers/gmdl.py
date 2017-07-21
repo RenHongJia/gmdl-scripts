@@ -1,7 +1,7 @@
 """
-MDC
+GMDL
 
-requires MDC_PATH as an ENV variable
+requires GMDL_PATH as an ENV variable
 """
 
 import subprocess
@@ -12,7 +12,7 @@ import pandas as pd
 
 class Classifier(object):
   def __init__(self):
-    print 'MDC'
+    print 'GMDL'
   
   def models(self):
     sigma = [0.5, 1, 2, 3]
@@ -36,8 +36,8 @@ class Classifier(object):
     X_test = pd.DataFrame(scaler.transform(X_test))
 
     path = '/tmp/'
-    train = 'train.mdc.' + set_name + '.' + id
-    test = 'test.mdc.' + set_name + '.' + id
+    train = 'train.gmdl.' + set_name + '.' + id
+    test = 'test.gmdl.' + set_name + '.' + id
 
     X_train.assign(label=y_train.values).to_csv(path + train, header=False, index=False)
     X_test.assign(label=y_test.values).to_csv(path + test, header=False, index=False)
@@ -70,11 +70,11 @@ class Classifier(object):
   def __command(self, variables):
     variables['sigma'] = variables['model'][0]
     variables['omega'] = variables['model'][1] 
-    variables['PATH'] = os.environ['MDC_PATH']
-    variables['CONFIG'] = os.path.realpath('./metadata/mdc.config.json')
+    variables['PATH'] = os.environ['GMDL_PATH']
+    variables['CONFIG'] = os.path.realpath('./metadata/gmdl.config.json')
 
     return """\
-    %(PATH)s/mdc.app \
+    %(PATH)s/gmdl.app \
     --fscore \
     --quiet \
     --no-incremental-learning \

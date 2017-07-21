@@ -1,1 +1,1 @@
-# mdc-scripts
+# gmdl-scripts
