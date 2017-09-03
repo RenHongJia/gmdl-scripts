@@ -13,6 +13,8 @@ parser.add_argument('--pattern', dest='pattern', type=str, default='',
                     help='the pattern of files to look at')
 parser.add_argument('--sets', dest='sets', action='store_true', 
                     help='only prints the sets')
+parser.add_argument('--hide-models', dest='hide_models', action='store_true', 
+                    help='only prints the best model')
 parser.add_argument('--k', dest='k', type=int, default=5,
                     help='the number of folds')
 parser.add_argument('--measure', dest='measure', type=int, default=0,
@@ -80,14 +82,15 @@ def line(symbol):
   print symbol * 80
 
 for s in sets:
-  line('=')
-  print 'SET', s
-  line('=')
+  print '{}:'.format(s)
 
   for module in modules:
-    line('-')
     instance = module.Classifier()
-    line('-')
+
+    print ' {}:'.format(instance)
+
+    if not args.hide_models:
+      print '  models:'
 
     models = instance.models()
 
@@ -100,20 +103,24 @@ for s in sets:
     winner_score = 0
     winner_model = None
 
-    for r in results:
+    for index, r in enumerate(results):
       model, final_score = r
 
-      print 'model', model, 'average', final_score
+      if not args.hide_models:
+        print '   - description: "{}"'.format(model)
+        print '     macro-f: {}'.format(final_score[0])
+        print '     micro-f: {}'.format(final_score[1])
 
       if winner_model is None or final_score[args.measure] > winner_score:
         winner_score = final_score[args.measure]
         winner_model = model
 
-    print ''
-    line('*')
-
     path = realpath(join(args.path, s)) + '/'
-    print 'winner model', winner_model, 'score', winner_score, '=>', instance.run(winner_model, path, 'train', 'test', s)
+    winner_score = instance.run(winner_model, path, 'train', 'test', s)
 
-    line('*')
-    print ''
+    if not args.hide_models:
+      print '  best-model:'
+    
+    print '   description: "{}"'.format(winner_model)
+    print '   macro-f: {}'.format(winner_score[0])
+    print '   micro-f: {}'.format(winner_score[1])

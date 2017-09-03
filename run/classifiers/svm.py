@@ -7,8 +7,8 @@ from aux.BasicClassifierCall import BasicClassifierCall
 from itertools import product
 
 class Classifier(object):
-  def __init__(self):
-    print 'SVM'
+  def __str__(self):
+    return 'SVM'
   
   def models(self):
     C = [0.5, 1, 3]

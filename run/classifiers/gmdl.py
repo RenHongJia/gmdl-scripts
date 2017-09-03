@@ -11,8 +11,8 @@ from sklearn import preprocessing
 import pandas as pd
 
 class Classifier(object):
-  def __init__(self):
-    print 'GMDL'
+  def __str__(self):
+    return 'GMDL'
   
   def models(self):
     sigma = [0.5, 1, 2, 3]

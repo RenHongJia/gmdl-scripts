@@ -6,8 +6,8 @@ from sklearn.naive_bayes import GaussianNB
 from aux.BasicClassifierCall import BasicClassifierCall
 
 class Classifier(object):
-  def __init__(self):
-    print 'Gaussian NB'
+  def __str__(self):
+    return 'Gaussian NB'
   
   def models(self):
     return ['N/A']

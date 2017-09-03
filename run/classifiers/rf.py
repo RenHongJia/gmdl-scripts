@@ -7,8 +7,8 @@ from aux.BasicClassifierCall import BasicClassifierCall
 from itertools import product
 
 class Classifier(object):
-  def __init__(self):
-    print 'Random Forest'
+  def __str__(self):
+    return 'Random Forest'
   
   def models(self):
     trees = [5, 10, 20, 30]
