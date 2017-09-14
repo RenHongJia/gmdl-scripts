@@ -67,6 +67,50 @@ def grid_search(data):
 
   return results
 
+def compute_outer_fold(data):
+  search_data, models = data
+
+  models_scores = {}
+  models_descriptions = {}
+
+  pool = Pool(args.k)
+  data = product(search_data, [models])
+  results = pool.map(grid_search, data)
+
+  pool.close()
+  pool.join()
+
+  results = reduce(lambda x, y: x + y, results)
+
+  for result in results:
+    model, scores = result
+    key = str(model)
+
+    if models_descriptions.has_key(key):
+      models_scores[key] += np.array(scores)
+    else:
+      models_scores[key] = np.array(scores)
+      models_descriptions[key] = model
+
+  best = None
+
+  for ms in models_scores:
+    models_scores[ms] = models_scores[ms] / float(args.k)
+
+    if best is None or models_scores[ms][args.measure] > models_scores[best][args.measure]:
+      best = ms
+
+  training, validation, test = search_data[-1]
+
+  X_training, y_training = training
+  X_validation, y_validation = validation
+
+  X_training = pd.concat([X_training, X_validation])
+  y_training = pd.concat([y_training, y_validation])
+  training = (X_training, y_training)
+
+  return instance.run(models_descriptions[best], training, test)
+
 for s in sets:
   print '{}:'.format(s)
 
@@ -77,57 +121,25 @@ for s in sets:
     print ' {}:'.format(instance)
 
     models = instance.models()
-    test_results = []
 
-    for _ in xrange(args.k):
-      models_scores = {}
-      models_descriptions = {}
+    search_data = []
 
-      search_data = []
+    for _ in xrange(args.k ** 2):
+      search_data.append(next(current_set))
 
-      for _ in xrange(args.k):
-        search_data.append(next(current_set))
+    search_data = [ \
+      search_data[(i * args.k) : (i * args.k + args.k)] \
+      for i in xrange(args.k) \
+    ]
 
-      pool = Pool(args.k)
-      data = product(search_data, [models])
-      results = pool.map(grid_search, data)
+    pool = Pool(args.k)
+    data = product(search_data, [models])
+    results = pool.map(compute_outer_fold, data)
 
-      pool.close()
-      pool.join()
+    pool.close()
+    pool.join()
 
-      results = reduce(lambda x, y: x + y, results)
-
-      for result in results:
-        model, scores = result
-        key = str(model)
-
-        if models_descriptions.has_key(key):
-          models_scores[key] += np.array(scores)
-        else:
-          models_scores[key] = np.array(scores)
-          models_descriptions[key] = model
-
-      best = None
-
-      for ms in models_scores:
-        models_scores[ms] = models_scores[ms] / float(args.k)
-
-        if best is None or models_scores[ms][args.measure] > models_scores[best][args.measure]:
-          best = ms
-
-      training, validation, test = search_data[-1]
-
-      X_training, y_training = training
-      X_validation, y_validation = validation
-
-      X_training = pd.concat([X_training, X_validation])
-      y_training = pd.concat([y_training, y_validation])
-      training = (X_training, y_training)
-
-      score = instance.run(models_descriptions[best], training, test)
-      test_results.append(score)
-
-    macro, micro = np.mean(test_results, axis=0)
+    macro, micro = np.mean(results, axis=0)
 
     print '  macro-f: {}'.format(macro)
     print '  micro-f: {}'.format(micro)
