@@ -54,6 +54,19 @@ def classify(data):
   model, instance, training, validation = data
   return (model, instance.run(model, training, validation))
 
+def grid_search(data):
+  search_data, models = data
+  training, validation, test = search_data
+
+  pool = Pool(len(models))
+  data = product(models, [instance], [training], [validation])
+  results = pool.map(classify, data)
+
+  pool.close()
+  pool.join()
+
+  return results
+
 for s in sets:
   print '{}:'.format(s)
 
@@ -70,26 +83,29 @@ for s in sets:
       models_scores = {}
       models_descriptions = {}
 
-      # Grid Search
+      search_data = []
+
       for _ in xrange(args.k):
-        training, validation, test = next(current_set)
+        search_data.append(next(current_set))
 
-        pool = Pool(len(models))
-        data = product(models, [instance], [training], [validation])
-        results = pool.map(classify, data)
+      pool = Pool(args.k)
+      data = product(search_data, [models])
+      results = pool.map(grid_search, data)
 
-        pool.close()
-        pool.join()
+      pool.close()
+      pool.join()
 
-        for result in results:
-          model, scores = result
-          key = str(model)
+      results = reduce(lambda x, y: x + y, results)
 
-          if models_descriptions.has_key(key):
-            models_scores[key] += np.array(scores)
-          else:
-            models_scores[key] = np.array(scores)
-            models_descriptions[key] = model
+      for result in results:
+        model, scores = result
+        key = str(model)
+
+        if models_descriptions.has_key(key):
+          models_scores[key] += np.array(scores)
+        else:
+          models_scores[key] = np.array(scores)
+          models_descriptions[key] = model
 
       best = None
 
@@ -98,6 +114,8 @@ for s in sets:
 
         if best is None or models_scores[ms][args.measure] > models_scores[best][args.measure]:
           best = ms
+
+      training, validation, test = search_data[-1]
 
       X_training, y_training = training
       X_validation, y_validation = validation
