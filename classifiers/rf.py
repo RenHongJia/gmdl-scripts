@@ -11,7 +11,8 @@ class Classifier(object):
     return 'Random Forest'
   
   def models(self):
-    trees = [5, 10, 20, 30]
+    # [10, 20, 30, 40, 50, 60, 70, 80, 90]
+    trees = list(xrange(10, 100, 10))
     criterion = ['gini', 'entropy']
 
     return list(product(trees, criterion))
