@@ -1,5 +1,5 @@
 *.pyc
 sets
-data
+datasets/raw
 .DS_Store
 results
