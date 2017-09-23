@@ -11,8 +11,8 @@ parser = argparse.ArgumentParser(description='Runs k-fold CV and grid search')
 
 parser.add_argument('--path', dest='path', type=str, required=True,
                     help='the path to the datasets folds')
-parser.add_argument('--pattern', dest='pattern', type=str, default='',
-                    help='the pattern of files to look at')
+parser.add_argument('--exclude-sets', dest='exclude_sets', nargs='+', default=[],
+                    help='the list of sets that should not be ran')
 parser.add_argument('--sets', dest='sets', action='store_true', 
                     help='only prints the sets')
 parser.add_argument('--k', dest='k', type=int, default=5,
@@ -24,22 +24,23 @@ parser.add_argument('--exclude', dest='exclude', nargs='+', default=[],
 
 args = parser.parse_args()
 
-sets = filter(lambda x: x.find(args.pattern) >= 0, listdir(args.path))
+sets = set(listdir(args.path)) - set(args.exclude_sets)
+sets = list(sets)
 
-classifiers_files = filter(lambda x: x.find('.pyc') == -1 and x.find('__init__') == -1, listdir('./classifiers/'))
-
-classifiers = map(
-  lambda x: 'classifiers.' + x.split('.')[0], 
-  classifiers_files
+classifiers_files = filter(lambda x: \
+  x.find('.pyc') == -1 and x.find('__init__') == -1, \
+  listdir('./classifiers/') \
 )
 
-classifiers = filter(
-  lambda c: reduce(
-    lambda x, y: x and y[0].find(y[1]) == -1,
-    zip(repeat(c), args.exclude), True
-  ),
-  classifiers
-)
+classifiers_files = map(lambda x: x.split('.')[0], classifiers_files)
+classifiers_files = set(classifiers_files) - set(args.exclude)
+classifiers = map(lambda x: 'classifiers.' + x, list(classifiers_files))
+
+def set_importance(name):
+  df = pd.read_csv(join(args.path, name))
+  return df.shape[0] * df.shape[1]
+
+sets = sorted(sets, key=set_importance)
 
 if args.sets:
   print sets
