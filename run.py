@@ -167,7 +167,7 @@ for s in sets:
 
     for cm in results:
       print '  fold-{}: |'.format(str(cm_counter))
-      print '    ' + str(cm).replace('\n', '\n    ')
+      print '    ' + cm.to_string().replace('\n', '\n    ')
 
       cm_counter += 1
 
