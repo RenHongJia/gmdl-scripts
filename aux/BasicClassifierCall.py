@@ -2,7 +2,8 @@ import os
 from sklearn import preprocessing
 from itertools import product
 import pandas as pd
-from sklearn.metrics import f1_score
+from sklearn.metrics import confusion_matrix
+from sklearn.utils.multiclass import unique_labels
 import warnings
 
 def BasicClassifierCall(classifier, model, train, test):
@@ -18,7 +19,7 @@ def BasicClassifierCall(classifier, model, train, test):
 
     with warnings.catch_warnings():
       warnings.simplefilter('ignore')
-      macro = f1_score(y_test, y_pred, average='macro') 
-      micro = f1_score(y_test, y_pred, average='micro') 
+      classes = unique_labels(y_test, y_pred)
+      cm = confusion_matrix(y_test, y_pred)
 
-    return [macro, micro]
+    return pd.DataFrame(cm, columns=classes)

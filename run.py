@@ -5,26 +5,30 @@ from multiprocessing.dummy import Pool
 from itertools import repeat, product
 import numpy as np
 from aux.GetFold import get_fold
+from aux.Metrics import macro, micro
 import pandas as pd
 
 parser = argparse.ArgumentParser(description='Runs k-fold CV and grid search')
 
 parser.add_argument('--path', dest='path', type=str, required=True,
                     help='the path to the datasets folds')
-parser.add_argument('--exclude-sets', dest='exclude_sets', nargs='+', default=[],
-                    help='the list of sets that should not be ran')
+parser.add_argument('--exclude-sets', dest='exclude_sets', nargs='+', default=[], help='the list of sets that should not be ran')
+parser.add_argument('--only-sets', dest='only_sets', nargs='+', default=[], help='the list of sets that should be ran (prioritized)')
 parser.add_argument('--sets', dest='sets', action='store_true', 
                     help='only prints the sets')
 parser.add_argument('--k', dest='k', type=int, default=5,
                     help='the number of folds')
-parser.add_argument('--measure', dest='measure', type=int, default=0,
+parser.add_argument('--measure', dest='measure', type=str, default='macro-f',
                     help='the index of the returned score measure to be used to decide the winner model')
 parser.add_argument('--exclude', dest='exclude', nargs='+', default=[],
                     help='the list of methods that should not be ran')
+parser.add_argument('--only', dest='only', nargs='+', default=[],
+                    help='the list of methods that should be ran only (prioritized)')
 
 args = parser.parse_args()
 
 sets = set(listdir(args.path)) - set(args.exclude_sets)
+sets = args.only_sets if len(args.only_sets) > 0 else sets
 sets = list(sets)
 
 classifiers_files = filter(lambda x: \
@@ -34,6 +38,7 @@ classifiers_files = filter(lambda x: \
 
 classifiers_files = map(lambda x: x.split('.')[0], classifiers_files)
 classifiers_files = set(classifiers_files) - set(args.exclude)
+classifiers_files = args.only if len(args.only) > 0 else classifiers_files
 classifiers = map(lambda x: 'classifiers.' + x, list(classifiers_files))
 
 def set_importance(name):
@@ -70,9 +75,9 @@ def grid_search(data):
 
 def compute_outer_fold(data):
   search_data, models = data
-
-  models_scores = {}
-  models_descriptions = {}
+  confusion_matrices = {}
+  models_results = {}
+  classes = None
 
   pool = Pool(args.k)
   data = product(search_data, [models])
@@ -84,22 +89,39 @@ def compute_outer_fold(data):
   results = reduce(lambda x, y: x + y, results)
 
   for result in results:
-    model, scores = result
+    model, confusion_matrix = result
+
+    if classes is None:
+      classes = confusion_matrix.columns.tolist()
+
+    confusion_matrix = confusion_matrix.reindex_axis(classes, axis=1)
+
     key = str(model)
 
-    if models_descriptions.has_key(key):
-      models_scores[key] += np.array(scores)
+    if confusion_matrices.has_key(key):
+      confusion_matrices[key] += confusion_matrix
     else:
-      models_scores[key] = np.array(scores)
-      models_descriptions[key] = model
+      confusion_matrices[key] = confusion_matrix
+      models_results[key] = {'model': model}
+
+  for model in confusion_matrices:
+    p_macro, r_macro, f_macro = macro(confusion_matrices[key])
+    p_micro, r_micro, f_micro = micro(confusion_matrices[key])
+
+    models_results[model]['macro-f'] = f_macro
+    models_results[model]['micro-f'] = f_micro
 
   best = None
 
-  for ms in models_scores:
-    models_scores[ms] = models_scores[ms] / float(args.k)
+  for model in confusion_matrices:
+    if best is None:
+      best = model
+    else:
+      best_score = models_results[best][args.measure]
+      current_score = models_results[model][args.measure]
 
-    if best is None or models_scores[ms][args.measure] > models_scores[best][args.measure]:
-      best = ms
+      if current_score > best_score:
+        best = model
 
   training, validation, test = search_data[-1]
 
@@ -110,7 +132,7 @@ def compute_outer_fold(data):
   y_training = pd.concat([y_training, y_validation])
   training = (X_training, y_training)
 
-  return instance.run(models_descriptions[best], training, test)
+  return instance.run(models_results[best]['model'], training, test)
 
 for s in sets:
   print '{}:'.format(s)
@@ -140,7 +162,28 @@ for s in sets:
     pool.close()
     pool.join()
 
-    macro, micro = np.mean(results, axis=0)
+    final_cm = None
+    cm_counter = 1
 
-    print '  macro-f: {}'.format(macro)
-    print '  micro-f: {}'.format(micro)
+    for cm in results:
+      print '  fold-{}: |'.format(str(cm_counter))
+      print '    ' + str(cm).replace('\n', '\n    ')
+
+      cm_counter += 1
+
+      if final_cm is None:
+        final_cm = cm
+      else:
+        final_cm += cm.reindex_axis(final_cm.columns.tolist(), axis=1)
+
+    p_macro, r_macro, f_macro = macro(final_cm)
+    p_micro, r_micro, f_micro = micro(final_cm)
+
+    print '  macro:'
+    print '    - precision: {}'.format(p_macro)
+    print '    - recall: {}'.format(r_macro)
+    print '    - f1: {}'.format(f_macro)
+    print '  micro:'
+    print '    - precision: {}'.format(p_micro)
+    print '    - recall: {}'.format(r_micro)
+    print '    - f1: {}'.format(f_micro)
