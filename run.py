@@ -64,7 +64,7 @@ def grid_search(data):
   search_data, models = data
   training, validation, test = search_data
 
-  pool = Pool(len(models))
+  pool = Pool(args.k)
   data = product(models, [instance], [training], [validation])
   results = pool.map(classify, data)
 

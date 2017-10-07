@@ -11,15 +11,14 @@ class GMDL(object):
 
   def fit(self, X, y):
     x = X.copy()
-    x['class'] = y
+    x['class'] = y.values
 
     labels = re.sub(' +', ',', str(y.unique())[1:-1]).replace("'", '')
 
     self.instance = subprocess.Popen(
       self.__command(labels),
-      stdin=subprocess.PIPE,
       stdout=subprocess.PIPE,
-      stderr=subprocess.PIPE,
+      stdin=subprocess.PIPE,
       shell=True,
       close_fds=True
     )
@@ -33,8 +32,8 @@ class GMDL(object):
 
     output, err = self.instance.communicate(x.to_csv(index=None, header=None))
 
-    if err != '':
-      raise Exception('ERR: ' + err + '\n\n')
+    if err:
+      raise Exception(err)
 
     return output[:-1].split(', ')
 
@@ -43,8 +42,7 @@ class GMDL(object):
       'sigma': self.sigma,
       'omega': self.omega,
       'labels': labels,
-      'PATH': os.environ['GMDL_PATH'],
-      'CONFIG': os.path.realpath('./metadata/gmdl.config.json')
+      'PATH': os.environ['GMDL_PATH']
     }
 
     return """\
@@ -59,6 +57,5 @@ class GMDL(object):
     --forgetting_factor "1.0" \
     --sigma "%(sigma)s" \
     --label "-1" \
-    --labels "%(labels)s" \
-    --config "%(CONFIG)s"
+    --labels "%(labels)s"
     """ % variables
