@@ -5,11 +5,9 @@ import pandas as pd
 import re
 
 class GMDL(object):
-  def __init__(self, sigma, tau, learning_rate, momentum):
+  def __init__(self, sigma, tau):
     self.sigma = sigma
     self.tau = tau
-    self.learning_rate = learning_rate
-    self.momentum = momentum
 
   def fit(self, X, y):
     x = X.copy()
@@ -43,8 +41,6 @@ class GMDL(object):
     variables = {
       'sigma': self.sigma,
       'tau': self.tau,
-      'learning_rate': self.learning_rate,
-      'momentum': self.momentum,
       'labels': labels,
       'PATH': os.environ['GMDL_PATH']
     }
@@ -53,8 +49,8 @@ class GMDL(object):
     %(PATH)s/gmdl.app \
     --stdin \
     --quiet \
-    --learning_rate "%(learning_rate)s" \
-    --momentum "%(momentum)s" \
+    --learning_rate "0.001" \
+    --momentum "0.9" \
     --tau "%(tau)s" \
     --sigma "%(sigma)s" \
     --labels "%(labels)s" \
