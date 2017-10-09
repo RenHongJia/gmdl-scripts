@@ -5,10 +5,8 @@ import pandas as pd
 import re
 
 class GMDL(object):
-  def __init__(self, sigma, omega, beta, tau, learning_rate, momentum):
+  def __init__(self, sigma, tau, learning_rate, momentum):
     self.sigma = sigma
-    self.omega = omega
-    self.beta = beta
     self.tau = tau
     self.learning_rate = learning_rate
     self.momentum = momentum
@@ -44,8 +42,6 @@ class GMDL(object):
   def __command(self, labels):
     variables = {
       'sigma': self.sigma,
-      'omega': self.omega,
-      'beta': self.beta,
       'tau': self.tau,
       'learning_rate': self.learning_rate,
       'momentum': self.momentum,
@@ -60,10 +56,9 @@ class GMDL(object):
     --learning_rate "%(learning_rate)s" \
     --momentum "%(momentum)s" \
     --tau "%(tau)s" \
-    --beta "%(beta)s" \
-    --omega "%(omega)s" \
-    --forgetting_factor "1.0" \
     --sigma "%(sigma)s" \
+    --labels "%(labels)s" \
+    --omega "32" \
+    --forgetting_factor "1.0" \
     --label "-1" \
-    --labels "%(labels)s"
     """ % variables
