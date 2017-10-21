@@ -14,8 +14,8 @@ class Classifier(object):
   
   def models(self):
     sigma = [1, 5, 10]
-    tau = [0, 1, 3, 5, 10]
-    return list(product(sigma, tau, learning_rate, momentum))
+    tau = [0]
+    return list(product(sigma, tau))
 
   def run(self, model, train, test):
     classifier = GMDL(*model)
