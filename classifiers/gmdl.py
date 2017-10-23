@@ -13,7 +13,7 @@ class Classifier(object):
     return 'GMDL'
   
   def models(self):
-    sigma = [1, 5, 10]
+    sigma = [2, 5, 10]
     tau = [0]
     return list(product(sigma, tau))
 

@@ -8,7 +8,10 @@ def macro(cf):
   precision = sum(precision) / C
 
   recall = map(lambda i: div(tp[i], tp[i] + fn[i]), xrange(C))
-  recall = sum(recall) / C  
+  recall = sum(recall) / C
+
+  precision = precision if not np.isnan(precision) else 0
+  recall = recall if not np.isnan(recall) else 0
 
   return precision, recall, harmonic_mean(precision, recall)
 
@@ -18,6 +21,9 @@ def micro(cf):
 
   precision = div(sum(tp), sum(map(lambda i: tp[i] + fp[i], xrange(C))))
   recall = div(sum(tp), sum(map(lambda i: tp[i] + fn[i], xrange(C))))
+
+  precision = precision if not np.isnan(precision) else 0
+  recall = recall if not np.isnan(recall) else 0
 
   return precision, recall, harmonic_mean(precision, recall)
 
