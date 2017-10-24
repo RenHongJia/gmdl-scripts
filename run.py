@@ -24,6 +24,8 @@ parser.add_argument('--exclude', dest='exclude', nargs='+', default=[],
                     help='the list of methods that should not be ran')
 parser.add_argument('--only', dest='only', nargs='+', default=[],
                     help='the list of methods that should be ran only (prioritized)')
+parser.add_argument('--pool', dest='pool', type=int, default=5,
+                    help='the number of threads to have')
 
 args = parser.parse_args()
 
@@ -64,7 +66,7 @@ def grid_search(data):
   search_data, models = data
   training, validation, test = search_data
 
-  pool = Pool(args.k)
+  pool = Pool(args.pool)
   data = product(models, [instance], [training], [validation])
   results = pool.map(classify, data)
 
@@ -79,7 +81,7 @@ def compute_outer_fold(data):
   models_results = {}
   classes = None
 
-  pool = Pool(args.k)
+  pool = Pool(args.pool)
   data = product(search_data, [models])
   results = pool.map(grid_search, data)
 
@@ -155,7 +157,7 @@ for s in sets:
       for i in xrange(args.k) \
     ]
 
-    pool = Pool(args.k)
+    pool = Pool(args.pool)
     data = product(search_data, [models])
     results = pool.map(compute_outer_fold, data)
 
