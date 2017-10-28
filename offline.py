@@ -35,13 +35,13 @@ sets = list(sets)
 
 classifiers_files = filter(lambda x: \
   x.find('.pyc') == -1 and x.find('__init__') == -1, \
-  listdir('./classifiers/') \
+  listdir('./offline_classifiers/') \
 )
 
 classifiers_files = map(lambda x: x.split('.')[0], classifiers_files)
 classifiers_files = set(classifiers_files) - set(args.exclude)
 classifiers_files = args.only if len(args.only) > 0 else classifiers_files
-classifiers = map(lambda x: 'classifiers.' + x, list(classifiers_files))
+classifiers = map(lambda x: 'offline_classifiers.' + x, list(classifiers_files))
 
 def set_importance(name):
   df = pd.read_csv(join(args.path, name))
