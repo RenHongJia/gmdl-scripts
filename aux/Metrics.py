@@ -4,6 +4,9 @@ def macro(cf):
   tp, fn, fp = get_ratios(cf)
   C = len(tp)
 
+  if C == 0:
+    return np.nan, np.nan, np.nan
+
   precision = map(lambda i: div(tp[i], tp[i] + fp[i]), xrange(C))
   precision = sum(precision) / C
 
@@ -18,6 +21,9 @@ def macro(cf):
 def micro(cf):
   tp, fn, fp = get_ratios(cf)
   C = len(tp)
+
+  if C == 0:
+    return np.nan, np.nan, np.nan
 
   precision = div(sum(tp), sum(map(lambda i: tp[i] + fp[i], xrange(C))))
   recall = div(sum(tp), sum(map(lambda i: tp[i] + fn[i], xrange(C))))
