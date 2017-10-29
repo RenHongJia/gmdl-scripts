@@ -80,12 +80,12 @@ def should_give_feedback(epoch, head_epoch, n_mistakes):
     return False
 
   if FEEDBACK['expon']:
-    return (head_epoch - epoch) == np.floor(float(args.feedback[1:]) ** (n_mistakes - 1))
+    return (epoch - head_epoch) >= np.floor(float(args.feedback[1:]) ** (n_mistakes))
 
   if FEEDBACK['proba']:
     return np.random.random() <= float(args.feedback)
 
-  return (head_epoch - epoch) == int(args.feedback)
+  return (epoch - head_epoch) == int(args.feedback)
 
 def predict(data):
   module, sets = data
