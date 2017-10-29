@@ -10,3 +10,6 @@ class Classifier(SGDClassifier):
 
   def __str__(self):
     return 'SVM'
+
+  def partial_fit(self, X, y, y_predicted, classes):
+    super(Classifier, self).partial_fit(X, y, classes=classes)

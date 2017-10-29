@@ -115,7 +115,7 @@ def predict(data):
 
     if len(y_mistake) > 0 and should_give_feedback(epoch, y_mistake[0][0], n_mistakes):
       _, _sample, _yi_true, _yi_pred = y_mistake.pop(0)
-      classifier.partial_fit(_sample, [_yi_true], classes=labels)
+      classifier.partial_fit(_sample, [_yi_true], _yi_pred, labels)
 
   y_pred = pd.Series(y_pred, dtype=y_test.dtype)
 
