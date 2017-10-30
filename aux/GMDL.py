@@ -46,7 +46,7 @@ class GMDL(object):
 
     self.instance.stdin.write(data)
 
-  def partial_fit(X, y, y_predicted):
+  def partial_fit(self, X, y, y_predicted):
     x = X.copy()
     x['class'] = y[0]
 
@@ -67,7 +67,7 @@ class GMDL(object):
       
       self.instance.stdin.write(data)
 
-      time.sleep(0.05)
+      time.sleep(0.01)
 
       output = self.instance.stdout.readline().rstrip()
 
