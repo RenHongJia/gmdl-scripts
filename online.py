@@ -117,7 +117,7 @@ def predict(data):
       classifier.partial_fit(_sample, [_yi_true], [_yi_pred], labels)
 
   y_pred = pd.Series(y_pred, dtype=y_test.dtype)
-  cm = confusion_matrix(y_test, y_pred)
+  cm = confusion_matrix(y_test, y_pred, labels=labels)
 
   return (str(classifier), pd.DataFrame(cm, columns=labels))
 
