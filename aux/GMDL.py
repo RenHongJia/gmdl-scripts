@@ -15,14 +15,15 @@ class GMDL(object):
     self.tau = tau
     self.labels = labels
     self.online = online
+    self.instance = None
 
   def __del__(self):
     if self.instance is not None:
       self.instance.kill()
 
-  def fit(self, X, y):
-    x = X.copy()
-    x['class'] = y.values
+  def __set_instance(self, X, y):
+    if self.instance is not None:
+      return
 
     n, m = X.shape
 
@@ -37,6 +38,13 @@ class GMDL(object):
       close_fds=True
     )
 
+  def fit(self, X, y):
+    self.__set_instance(X, y)
+
+    n, m = X.shape
+    x = X.copy()
+    x['class'] = y.values
+
     if self.online:
       csv = x.to_csv(index=None, header=None)
       csv = csv.replace('\n', '\n' + TRAINING_TOKEN)
@@ -47,13 +55,19 @@ class GMDL(object):
     self.instance.stdin.write(data)
 
   def partial_fit(self, X, y, y_predicted):
+    self.__set_instance(X, y)
+
     x = X.copy()
-    x['class'] = y[0]
+    x['class'] = pd.Series(y)
 
-    PREDICTION_TOKEN = str(y_predicted) + '\n'
+    csv = x.to_csv(index=None, header=None).split('\n')[:-1]
 
-    csv = x.to_csv(index=None, header=None)
-    data = CORRECTION_TOKEN + csv + PREDICTION_TOKEN
+    merged = [None] * 3 * len(csv)
+    merged[0::3] = [CORRECTION_TOKEN[:-1]] * len(csv)
+    merged[1::3] = csv
+    merged[2::3] = pd.Series(y_predicted, dtype=str).tolist()
+
+    data = '\n'.join(merged) + '\n'
 
     self.instance.stdin.write(data)
 

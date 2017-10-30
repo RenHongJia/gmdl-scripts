@@ -91,7 +91,7 @@ def predict(data):
   X_train, X_test, y_train, y_test, labels = sets
 
   classifier = module.Classifier(labels=labels)
-  classifier.fit(X_train, y_train)
+  classifier.partial_fit(X_train, y_train, y_train, labels)
 
   y_pred = []
   y_mistake = []
@@ -114,7 +114,7 @@ def predict(data):
 
     if len(y_mistake) > 0 and should_give_feedback(epoch, y_mistake[0][0], n_mistakes):
       _, _sample, _yi_true, _yi_pred = y_mistake.pop(0)
-      classifier.partial_fit(_sample, [_yi_true], _yi_pred, labels)
+      classifier.partial_fit(_sample, [_yi_true], [_yi_pred], labels)
 
   y_pred = pd.Series(y_pred, dtype=y_test.dtype)
   cm = confusion_matrix(y_test, y_pred)
