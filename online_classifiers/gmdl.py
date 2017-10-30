@@ -14,4 +14,4 @@ class Classifier(GMDL):
     return 'GMDL'
 
   def partial_fit(self, X, y, y_predicted, classes):
-    pass
+    super(Classifier, self).partial_fit(X, y, y_predicted)
