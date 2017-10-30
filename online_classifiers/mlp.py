@@ -6,7 +6,7 @@ from sklearn.neural_network import MLPClassifier
 import warnings
 
 class Classifier(MLPClassifier):
-  def __init__(self):
+  def __init__(self, labels=[]):
     super(Classifier, self).__init__(random_state=123456789)
 
   def __str__(self):

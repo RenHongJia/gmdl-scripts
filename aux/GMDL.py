@@ -5,15 +5,17 @@ import pandas as pd
 import re
 
 class GMDL(object):
-  def __init__(self, sigma, tau):
+  def __init__(self, sigma, tau, labels=[]):
     self.sigma = sigma
     self.tau = tau
+    self.labels = labels
 
   def fit(self, X, y):
     x = X.copy()
     x['class'] = y.values
 
-    labels = re.sub(' +', ',', str(y.unique())[1:-1]).replace("'", '')
+    label_set = self.labels if len(self.labels) > 0 else y.unique()
+    labels = re.sub(' +', ',', str(label_set)[1:-1]).replace("'", '')
 
     self.instance = subprocess.Popen(
       self.__command(labels),

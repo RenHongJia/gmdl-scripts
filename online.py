@@ -91,7 +91,7 @@ def predict(data):
   module, sets = data
   X_train, X_test, y_train, y_test, labels = sets
 
-  classifier = module.Classifier()
+  classifier = module.Classifier(labels=labels)
   classifier.fit(X_train, y_train)
 
   y_pred = []
