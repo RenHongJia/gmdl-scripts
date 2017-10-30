@@ -4,6 +4,10 @@ from sklearn import preprocessing
 import pandas as pd
 import re
 
+TRAINING_TOKEN = '<Training>\n'
+CORRECTION_TOKEN = '<Correction>\n'
+TEST_TOKEN = '<Test>\n'
+
 class GMDL(object):
   def __init__(self, sigma, tau, online=False, labels=[]):
     self.sigma = sigma
@@ -29,7 +33,9 @@ class GMDL(object):
     )
 
     if self.online:
-      pass
+      csv = x.to_csv(index=None, header=None)
+      csv = csv.replace('\n', '\n' + TRAINING_TOKEN)
+      data = TRAINING_TOKEN + csv[:-len(TRAINING_TOKEN)]
     else:
       data = str(n) + '\n' + x.to_csv(index=None, header=None)
 
