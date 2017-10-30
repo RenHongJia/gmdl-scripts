@@ -42,7 +42,15 @@ class GMDL(object):
     self.instance.stdin.write(data)
 
   def partial_fit(X, y, y_predicted):
-    pass
+    x = X.copy()
+    x['class'] = y[0]
+
+    PREDICTION_TOKEN = str(y_predicted) + '\n'
+
+    csv = x.to_csv(index=None, header=None)
+    data = CORRECTION_TOKEN + csv + PREDICTION_TOKEN
+
+    self.instance.stdin.write(data)
 
   def predict(self, X):
     x = X.copy()
