@@ -1,16 +1,16 @@
 """
-SVM
+Multi-Layer Perceptron
 """
 
-from sklearn.linear_model import SGDClassifier
+from sklearn.neural_network import MLPClassifier
 import warnings
 
-class Classifier(SGDClassifier):
+class Classifier(MLPClassifier):
   def __init__(self):
     super(Classifier, self).__init__(random_state=123456789)
 
   def __str__(self):
-    return 'SVM'
+    return 'MLP'
 
   def partial_fit(self, X, y, y_predicted, classes):
     with warnings.catch_warnings():

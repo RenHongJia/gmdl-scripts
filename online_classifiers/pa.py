@@ -1,16 +1,16 @@
 """
-SVM
+PassiveAggressive
 """
 
-from sklearn.linear_model import SGDClassifier
+from sklearn.linear_model import PassiveAggressiveClassifier
 import warnings
 
-class Classifier(SGDClassifier):
+class Classifier(PassiveAggressiveClassifier):
   def __init__(self):
     super(Classifier, self).__init__(random_state=123456789)
 
   def __str__(self):
-    return 'SVM'
+    return 'PassiveAggressive'
 
   def partial_fit(self, X, y, y_predicted, classes):
     with warnings.catch_warnings():
