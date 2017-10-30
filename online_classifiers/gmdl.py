@@ -8,7 +8,7 @@ from aux.GMDL import GMDL
 
 class Classifier(GMDL):
   def __init__(self, labels=[]):
-    super(Classifier, self).__init__(sigma=2, tau=0, labels=labels)
+    super(Classifier, self).__init__(sigma=2, tau=1, labels=labels, online=True)
 
   def __str__(self):
     return 'GMDL'

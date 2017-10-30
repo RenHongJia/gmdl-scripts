@@ -3,6 +3,7 @@ import os
 from sklearn import preprocessing
 import pandas as pd
 import re
+import time
 
 TRAINING_TOKEN = '<Training>\n'
 CORRECTION_TOKEN = '<Correction>\n'
@@ -14,6 +15,10 @@ class GMDL(object):
     self.tau = tau
     self.labels = labels
     self.online = online
+
+  def __del__(self):
+    if self.instance is not None:
+      self.instance.kill()
 
   def fit(self, X, y):
     x = X.copy()
@@ -56,7 +61,20 @@ class GMDL(object):
     x = X.copy()
     x['class'] = ''
 
+    if self.online:
+      csv = x.to_csv(index=None, header=None)
+      data = TEST_TOKEN + csv
+      
+      self.instance.stdin.write(data)
+
+      time.sleep(0.05)
+
+      output = self.instance.stdout.readline().rstrip()
+
+      return [output]
+    
     output, err = self.instance.communicate(x.to_csv(index=None, header=None))
+    self.instance = None
 
     if err:
       raise Exception(err)
