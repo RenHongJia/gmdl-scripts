@@ -9,7 +9,6 @@ from aux.Metrics import macro, micro
 from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 import pandas as pd
-from sklearn.utils.multiclass import unique_labels
 from sklearn.metrics import confusion_matrix
 
 parser = argparse.ArgumentParser(description='Runs k-fold CV and grid search')
@@ -118,11 +117,9 @@ def predict(data):
       classifier.partial_fit(_sample, [_yi_true], _yi_pred, labels)
 
   y_pred = pd.Series(y_pred, dtype=y_test.dtype)
-
-  classes = unique_labels(y_test, y_pred)
   cm = confusion_matrix(y_test, y_pred)
 
-  return (str(classifier), pd.DataFrame(cm, columns=classes))
+  return (str(classifier), pd.DataFrame(cm, columns=labels))
 
 for s in sets:
   print '{}:'.format(s)
