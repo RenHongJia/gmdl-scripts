@@ -81,7 +81,7 @@ class GMDL(object):
       
       self.instance.stdin.write(data)
 
-      time.sleep(0.01)
+      # time.sleep(0.01)
 
       output = self.instance.stdout.readline().rstrip()
 
