@@ -1,4 +1,4 @@
-from os import listdir
+from os import listdir, environ
 from os.path import join, realpath
 import argparse
 from multiprocessing.dummy import Pool
@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 import pandas as pd
 from sklearn.metrics import confusion_matrix
+import sys
 
 parser = argparse.ArgumentParser(description='Runs k-fold CV and grid search')
 
@@ -132,6 +133,8 @@ def predict(data):
   cm = confusion_matrix(y_test, y_pred, labels=labels)
 
   return (str(classifier), pd.DataFrame(cm, columns=labels))
+
+print '# ' + environ['GMDL_PATH'] + ' ' + ' '.join(sys.argv)
 
 for s in sets:
   print '{}:'.format(s)

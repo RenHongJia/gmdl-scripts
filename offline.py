@@ -1,4 +1,4 @@
-from os import listdir
+from os import listdir, environ
 from os.path import join, realpath
 import argparse
 from multiprocessing.dummy import Pool
@@ -7,6 +7,7 @@ import numpy as np
 from aux.GetFold import get_fold
 from aux.Metrics import macro, micro
 import pandas as pd
+import sys
 
 parser = argparse.ArgumentParser(description='Runs k-fold CV and grid search')
 
@@ -135,6 +136,8 @@ def compute_outer_fold(data):
   training = (X_training, y_training)
 
   return instance.run(models_results[best]['model'], training, test)
+
+print '# ' + environ['GMDL_PATH'] + ' ' + ' '.join(sys.argv)
 
 for s in sets:
   print '{}:'.format(s)
