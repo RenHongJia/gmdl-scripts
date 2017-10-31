@@ -86,6 +86,18 @@ def should_give_feedback(epoch, head_epoch, n_mistakes):
 
   return (epoch - head_epoch) == int(args.feedback)
 
+def normalize(X):
+  X_aux = []
+  scaler = preprocessing.StandardScaler().fit(X)
+
+  for i in xrange(X.shape[0]):
+    sample = X.iloc[i].values.reshape(1, -1)
+    normalized_sample = scaler.transform(sample)
+    X_aux.append(normalized_sample[0])
+    scaler = scaler.partial_fit(sample)
+
+  return pd.DataFrame(X_aux)
+
 def predict(data):
   module, sets = data
   X_train, X_test, y_train, y_test, labels = sets
@@ -134,16 +146,8 @@ for s in sets:
   X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=123456789)
 
   if args.normalize:
-    X_aux = []
-    scaler = preprocessing.StandardScaler().fit(X_train)
-
-    for i in xrange(X_test.shape[0]):
-      sample = X_test.iloc[i].values.reshape(1, -1)
-      normalized_sample = scaler.transform(sample)
-      X_aux.append(normalized_sample[0])
-      scaler = scaler.partial_fit(sample)
-
-    X_test = pd.DataFrame(X_aux)
+    X_train = normalize(X_train)
+    X_test = normalize(X_test)
 
   pool = Pool(len(modules))
   data = product(modules, [(X_train, X_test, y_train, y_test, labels)])
