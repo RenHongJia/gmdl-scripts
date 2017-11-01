@@ -28,7 +28,7 @@ class GMDL(object):
     n, m = X.shape
 
     label_set = self.labels if len(self.labels) > 0 else y.unique()
-    labels = re.sub(' +', ',', str(label_set)[1:-1]).replace("'", '')
+    labels = re.sub(' +', ',', str(label_set)[1:-1].strip()).replace("'", '')
 
     self.instance = subprocess.Popen(
       self.__command(labels, m),
@@ -80,8 +80,6 @@ class GMDL(object):
       data = TEST_TOKEN + csv
       
       self.instance.stdin.write(data)
-
-      # time.sleep(0.01)
 
       output = self.instance.stdout.readline().rstrip()
 
