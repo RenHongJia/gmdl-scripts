@@ -17,6 +17,9 @@ while True:
   if line.find('recall') >= 0:
     continue
 
+  if line.find('#') >= 0:
+    document += line
+
   if line.find(':') >= 0:
     document += line
 
