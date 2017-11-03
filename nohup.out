@@ -1,0 +1,11 @@
+# /home/breno/gmdl online.py --path /Users/brenolimadefreitas/datasets --feedback 0 --normalize --only-sets lrs
+lrs:
+/bin/sh: /home/breno/gmdl/gmdl.app: No such file or directory
+Traceback (most recent call last):
+  File "online.py", line 157, in <module>
+    results = pool.map(predict, data)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/multiprocessing/pool.py", line 251, in map
+    return self.map_async(func, iterable, chunksize).get()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/multiprocessing/pool.py", line 567, in get
+    raise self._value
+IOError: [Errno 32] Broken pipe

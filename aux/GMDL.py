@@ -4,6 +4,7 @@ from sklearn import preprocessing
 import pandas as pd
 import re
 import time
+import numpy as np
 
 TRAINING_TOKEN = '<Training>\n'
 CORRECTION_TOKEN = '<Correction>\n'
@@ -28,7 +29,7 @@ class GMDL(object):
     n, m = X.shape
 
     label_set = self.labels if len(self.labels) > 0 else y.unique()
-    labels = re.sub(' +', ',', str(label_set)[1:-1].strip()).replace("'", '')
+    labels = ','.join(np.array(label_set).tolist())
 
     self.instance = subprocess.Popen(
       self.__command(labels, m),
