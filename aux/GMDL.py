@@ -29,7 +29,7 @@ class GMDL(object):
     n, m = X.shape
 
     label_set = self.labels if len(self.labels) > 0 else y.unique()
-    labels = ','.join(np.array(label_set).tolist())
+    labels = ','.join(np.array(label_set, dtype=str).tolist())
 
     self.instance = subprocess.Popen(
       self.__command(labels, m),
