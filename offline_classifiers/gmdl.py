@@ -17,6 +17,6 @@ class Classifier(object):
     tau = [0]
     return list(product(sigma, tau))
 
-  def run(self, model, train, test):
+  def run(self, model, train, test, labels):
     classifier = GMDL(*model)
-    return BasicClassifierCall(classifier, model, train, test)
+    return BasicClassifierCall(classifier, model, train, test, labels)

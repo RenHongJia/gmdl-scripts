@@ -17,7 +17,7 @@ class Classifier(object):
 
     return list(product(trees, criterion))
 
-  def run(self, model, train, test):
+  def run(self, model, train, test, labels):
     classifier = RandomForestClassifier(n_estimators=model[0], criterion=model[1])
-    return BasicClassifierCall(classifier, model, train, test)
+    return BasicClassifierCall(classifier, model, train, test, labels)
 

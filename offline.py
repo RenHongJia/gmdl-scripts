@@ -60,15 +60,15 @@ modules = map(
 )
 
 def classify(data):
-  model, instance, training, validation = data
-  return (model, instance.run(model, training, validation))
+  model, instance, training, validation, labels = data
+  return (model, instance.run(model, training, validation, labels))
 
 def grid_search(data):
   search_data, models = data
-  training, validation, test = search_data
+  training, validation, test, labels = search_data
 
   pool = Pool(args.pool)
-  data = product(models, [instance], [training], [validation])
+  data = product(models, [instance], [training], [validation], [labels])
   results = pool.map(classify, data)
 
   pool.close()
@@ -126,7 +126,7 @@ def compute_outer_fold(data):
       if current_score > best_score:
         best = model
 
-  training, validation, test = search_data[-1]
+  training, validation, test, labels = search_data[-1]
 
   X_training, y_training = training
   X_validation, y_validation = validation
@@ -135,7 +135,7 @@ def compute_outer_fold(data):
   y_training = pd.concat([y_training, y_validation])
   training = (X_training, y_training)
 
-  return instance.run(models_results[best]['model'], training, test)
+  return instance.run(models_results[best]['model'], training, test, labels)
 
 print '# ' + environ['GMDL_PATH'] + ' ' + ' '.join(sys.argv)
 

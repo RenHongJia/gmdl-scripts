@@ -6,7 +6,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.utils.multiclass import unique_labels
 import warnings
 
-def BasicClassifierCall(classifier, model, train, test):
+def BasicClassifierCall(classifier, model, train, test, labels):
     X_train, y_train = train
     X_test, y_test = test
 
@@ -20,6 +20,6 @@ def BasicClassifierCall(classifier, model, train, test):
     with warnings.catch_warnings():
       warnings.simplefilter('ignore')
       classes = unique_labels(y_test, y_pred)
-      cm = confusion_matrix(y_test, y_pred)
+      cm = confusion_matrix(y_test, y_pred, labels=labels)
 
     return pd.DataFrame(cm, columns=classes)

@@ -9,6 +9,8 @@ def get_fold(path, current_set, k):
   Y = X[label]
   del X[label]
 
+  labels = Y.unique()
+
   outer_skf = StratifiedKFold(n_splits=k)
   outer_skf.get_n_splits(X, Y)
 
@@ -36,4 +38,4 @@ def get_fold(path, current_set, k):
       y_train = y_outer_train.loc[inner_training_idx]
       y_validation = y_outer_train.loc[validation_idx]
 
-      yield (X_train, y_train), (X_validation, y_validation), (X_test, y_test)
+      yield (X_train, y_train), (X_validation, y_validation), (X_test, y_test), labels

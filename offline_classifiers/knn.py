@@ -13,6 +13,6 @@ class Classifier(object):
     # [3, 5, 7, 9, 11, 13, 15, 17, 19]
     return [i for i in xrange(3, 20) if i % 2 != 0] 
 
-  def run(self, model, train, test):
+  def run(self, model, train, test, labels):
     classifier = KNeighborsClassifier(n_neighbors=model)
-    return BasicClassifierCall(classifier, model, train, test)
+    return BasicClassifierCall(classifier, model, train, test, labels)

@@ -12,7 +12,7 @@ class Classifier(object):
   def models(self):
     return ['N/A']
 
-  def run(self, model, train, test):
+  def run(self, model, train, test, labels):
     classifier = GaussianNB()
-    return BasicClassifierCall(classifier, model, train, test)
+    return BasicClassifierCall(classifier, model, train, test, labels)
 

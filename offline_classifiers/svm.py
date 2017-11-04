@@ -14,7 +14,7 @@ class Classifier(object):
     # C = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000]
     return [10 ** i for i in xrange(-4, 4)]
 
-  def run(self, model, train, test):
+  def run(self, model, train, test, labels):
     classifier = LinearSVC(C=model)
-    return BasicClassifierCall(classifier, model, train, test)
+    return BasicClassifierCall(classifier, model, train, test, labels)
 
