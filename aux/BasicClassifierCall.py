@@ -19,7 +19,6 @@ def BasicClassifierCall(classifier, model, train, test, labels):
 
     with warnings.catch_warnings():
       warnings.simplefilter('ignore')
-      classes = unique_labels(y_test, y_pred)
       cm = confusion_matrix(y_test, y_pred, labels=labels)
 
-    return pd.DataFrame(cm, columns=classes)
+    return pd.DataFrame(cm, columns=labels)
