@@ -12,6 +12,8 @@ import pandas as pd
 from sklearn.metrics import confusion_matrix
 import sys
 
+np.random.seed(123456789)
+
 parser = argparse.ArgumentParser(description='Runs k-fold CV and grid search')
 
 parser.add_argument('--path', dest='path', type=str, required=True,
