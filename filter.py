@@ -1,4 +1,5 @@
 import sys
+import yaml
 
 document = ''
 
@@ -26,4 +27,17 @@ while True:
   if line.find(':') >= 0:
     document += line
 
-print document
+document = yaml.load(document)
+
+print 'base_dados,metodo,F-medidaMacro,F-medidaMicro'
+
+for dataset in document:
+  for method in document[dataset]:
+    m = document[dataset][method]
+    try:
+      macro = m['macro'][0]['f1']
+      micro = m['micro'][0]['f1']
+
+      print '{},{},{},{}'.format(dataset, method, macro, micro)
+    except:
+      pass
