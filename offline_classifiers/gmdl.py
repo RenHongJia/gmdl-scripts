@@ -14,7 +14,7 @@ class Classifier(object):
   
   def models(self):
     sigma = [2, 5, 10]
-    tau = [0, 2, 10]
+    tau = [0]
     return list(product(sigma, tau))
 
   def run(self, model, train, test, labels):
