@@ -27,6 +27,10 @@ while True:
   if line.find(':') >= 0:
     document += line
 
+if len(sys.argv) > 1 and sys.argv[1] == '--yaml':
+  print document
+  exit(0)
+
 document = yaml.load(document)
 
 print 'base_dados,metodo,F-medidaMacro,F-medidaMicro'
